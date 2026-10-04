@@ -1,21 +1,7 @@
-# Binaries
-/bf-server
-/bfgen
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test artifacts
-*.test
 *.out
-coverage.html
-
-# IDE & OS files
+*.tmp
+*.log
 .DS_Store
 .idea/
 .vscode/
-*.swp
-*.swo
 *~

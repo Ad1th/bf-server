@@ -1,31 +1,14 @@
-.PHONY: all build test test-race bench lint fmt run clean
+.PHONY: all serve test clean
 
-BINARY_NAME=bf-server
+all: test
 
-all: test build
+# Start the pure Brainfuck HTTP server on port 8080 (or specify PORT=...)
+serve:
+	./serve.sh $(PORT)
 
-build:
-	go build -o $(BINARY_NAME) ./cmd/bf-server
-	go build -o bfgen ./cmd/bfgen
-
+# Run the automated test suite against server.bf
 test:
-	go test -v ./...
-
-test-race:
-	go test -v -race ./...
-
-bench:
-	go test -bench=. -benchmem ./pkg/interpreter
-
-fmt:
-	gofmt -s -w .
-
-lint:
-	go vet ./...
-
-run: build
-	./$(BINARY_NAME) --app ./examples/basic --dev
+	./test.sh
 
 clean:
-	rm -f $(BINARY_NAME) bfgen coverage.out coverage.html
-
+	rm -f *.tmp *.out coverage.html
