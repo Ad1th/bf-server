@@ -6,6 +6,7 @@ all: test build
 
 build:
 	go build -o $(BINARY_NAME) ./cmd/bf-server
+	go build -o bfgen ./cmd/bfgen
 
 test:
 	go test -v ./...
@@ -26,4 +27,5 @@ run: build
 	./$(BINARY_NAME) --app ./examples/basic --dev
 
 clean:
-	rm -f $(BINARY_NAME) coverage.out coverage.html
+	rm -f $(BINARY_NAME) bfgen coverage.out coverage.html
+

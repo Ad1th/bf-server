@@ -256,10 +256,28 @@ BenchmarkInterpreter_EchoStream-8     16786    71628 ns/op    32978 B/op    7 al
 
 ## 📦 Example Applications
 
-- `examples/basic/`: Standard routes (`/`, `/hello`, `/about`, `404`)
-- `examples/echo/`: Raw HTTP request streaming echo (`index.bf`)
-- `examples/html/`: HTML web page with CSS styling rendered from Brainfuck
-- `examples/custom_status/`: Emits HTTP 418 I'm a teapot (`teapot.bf`)
+- `examples/router/`: **Native Brainfuck Router** — A single Brainfuck application (`index.bf`) that reads the raw HTTP request line on stdin (`,`), branches on the request path (`/`, `/hello`, unmatched), and emits corresponding HTTP responses and status codes entirely within Brainfuck.
+- `examples/basic/`: Standard multi-file route mapping (`/`, `/hello`, `/about`, `404`)
+- `examples/echo/`: Raw HTTP request streaming echo (`index.bf`) using `,[.,]`
+- `examples/html/`: Full HTML5 web page with modern CSS rendered and served from Brainfuck
+- `examples/custom_status/`: Emits custom HTTP 418 I'm a teapot status (`teapot.bf`)
+
+---
+
+## 🛠 Brainfuck Code Generator (`bfgen`)
+
+The repository includes a native Go-based Brainfuck generator tool (`cmd/bfgen`):
+
+```bash
+# Generate Brainfuck code for any text
+go run ./cmd/bfgen "Hello, World!" -o hello.bf
+
+# Generate a complete native Brainfuck HTTP request router
+go run ./cmd/bfgen -router -o router.bf
+```
+
+> [!NOTE]
+> The entire project, compiler, VM, HTTP server, and generator toolchain is written strictly in Go and pure Brainfuck with **zero external dependencies and zero Python**.
 
 ---
 

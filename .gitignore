@@ -1,5 +1,6 @@
 # Binaries
 /bf-server
+/bfgen
 *.exe
 *.exe~
 *.dll
