@@ -284,3 +284,78 @@ func TestIntegration_StepLimitExceeded(t *testing.T) {
 		t.Errorf("expected error message in body, got %s", string(body))
 	}
 }
+
+func TestIntegration_BrainfuckNativeRouter(t *testing.T) {
+	appDir := filepath.Join("..", "..", "examples", "router")
+
+	cfg := &config.Config{
+		Addr:       "127.0.0.1:0",
+		AppDir:     appDir,
+		MemorySize: 30000,
+		MaxSteps:   10000000,
+		DevMode:    false,
+		Timeout:    5 * time.Second,
+	}
+
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	srv, err := server.New(cfg, logger)
+	if err != nil {
+		t.Fatalf("failed to create server: %v", err)
+	}
+
+	ts := httptest.NewServer(srv.HTTPServer.Handler)
+	defer ts.Close()
+
+	client := ts.Client()
+
+	// 1. GET / routed natively in Brainfuck
+	t.Run("GET /", func(t *testing.T) {
+		res, err := client.Get(ts.URL + "/")
+		if err != nil {
+			t.Fatalf("request failed: %v", err)
+		}
+		defer res.Body.Close()
+
+		if res.StatusCode != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", res.StatusCode)
+		}
+		body, _ := io.ReadAll(res.Body)
+		if !strings.Contains(string(body), "Routed natively in Brainfuck") {
+			t.Errorf("expected native routing body, got %q", string(body))
+		}
+	})
+
+	// 2. GET /hello routed natively in Brainfuck
+	t.Run("GET /hello", func(t *testing.T) {
+		res, err := client.Get(ts.URL + "/hello")
+		if err != nil {
+			t.Fatalf("request failed: %v", err)
+		}
+		defer res.Body.Close()
+
+		if res.StatusCode != http.StatusOK {
+			t.Errorf("expected 200 OK, got %d", res.StatusCode)
+		}
+		body, _ := io.ReadAll(res.Body)
+		if !strings.Contains(string(body), "Greetings from Brainfuck router") {
+			t.Errorf("expected hello router body, got %q", string(body))
+		}
+	})
+
+	// 3. GET /unmatched routed to 404 in Brainfuck
+	t.Run("GET /unmatched", func(t *testing.T) {
+		res, err := client.Get(ts.URL + "/unmatched")
+		if err != nil {
+			t.Fatalf("request failed: %v", err)
+		}
+		defer res.Body.Close()
+
+		if res.StatusCode != http.StatusNotFound {
+			t.Errorf("expected 404 Not Found, got %d", res.StatusCode)
+		}
+		body, _ := io.ReadAll(res.Body)
+		if !strings.Contains(string(body), "Brainfuck router could not find this endpoint") {
+			t.Errorf("expected 404 router body, got %q", string(body))
+		}
+	})
+}
