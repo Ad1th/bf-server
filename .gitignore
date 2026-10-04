@@ -1,5 +1,5 @@
 # Binaries
-bf-server
+/bf-server
 *.exe
 *.exe~
 *.dll
